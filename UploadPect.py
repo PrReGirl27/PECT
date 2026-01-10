@@ -3,19 +3,19 @@ import cv2
 from ultralytics import YOLO
 import time
 from playsound3 import playsound
-import threading
+import threading #used so that the alert and video can play at the same time
 
 
 
 model = YOLO("pect_model.pt") #my Yolo Model
-cap = cv2.VideoCapture("testingGuy2.mp4") #which video my model will took at
+cap = cv2.VideoCapture("testingGuy2.mp4") #which video my model will took at, can be changed out for cv2.VideoCapture(0) to display the webcam instead
 SleepingTime = None #will be used to track time sleep
 
-#varibles to track when the play the alarm when someone is sleep
+#varibles to track when to play the alarm when someone is sleep
 lastTimeSinceAudioHasPlayed = 0 
-cooldown = 1
+cooldown = 1 # can be changed
 
-#function that plays the alert to wake the persion up
+#function that plays the alert to wake the person up
 def soundPlay():
     playsound("wakeUpBeep.mp3")
 
@@ -35,7 +35,7 @@ while cap.isOpened():
         break
 
     results = model(frame) #the model runs inference on each frame of the video and makes predictions/dections
-    annotated_frame = results[0].plot() #draws the predictions/detections on the spefice frame for the user to see
+    annotated_frame = results[0].plot() #draws the predictions/detections on the specific frame for the user to see
 
     #variables that update every frame
     sleep = False #person isn't sleep, the variable is checked and updated each frame
@@ -66,7 +66,7 @@ while cap.isOpened():
     #therefore, since SleepingTime is updated each frame, we get the accurate amount of time the person was sleep for
 
 
-    #text draw on each frame
+    #text to draw on each frame
     cv2.putText(annotated_frame, #where to draw
                 f"Time Sleep: {TimeSpentSleep:.1f}s", #draws the TimeSpentSleep timer
                 (20,100), #where to draw on the frame
@@ -75,7 +75,7 @@ while cap.isOpened():
                 (255, 0, 0), #what color to draw 
                 3) #thickness
     if TimeSpentSleep >= 1: #if the person has been sleep for one or more seconds, then..
-
+    #this avoids displaying the text and playing the audio for flicker detection
         cv2.putText(annotated_frame, #where to draw
                     "Wake Up!!", #what to draw
                     (20,200), #where to draw on the frame
@@ -91,7 +91,7 @@ while cap.isOpened():
         
         
         
-    cv2.imshow("Video", annotated_frame) #pulls up the frame on my screen when the code is run
+    cv2.imshow("Video", annotated_frame) #pulls up the frame on my screen when the code is running
 
     if cv2.waitKey(1) & 0xFF == ord('q'): #if "q" is clicked, stop the program
      break
