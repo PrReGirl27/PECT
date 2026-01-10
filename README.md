@@ -1,1 +1,1 @@
-"# PECT" 
+Pect is a Protecive Detector that detects if people are awake, sleep, or falling asleep. After I certian period of time, the app send an alert to a persion who is sleeping while on the road.
